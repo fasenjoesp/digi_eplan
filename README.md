@@ -14,4 +14,4 @@
 
 ## Documento
 
-La última versión compilada de la memoria se encuentra en
+La última versión compilada de la memoria se encuentra en [`main.pdf`](main.pdf).
