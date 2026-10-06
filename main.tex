@@ -1,0 +1,289 @@
+% CREACIÓN DEL DOCUMENTO
+\documentclass[
+	spanish, % Idioma: spanish, english, etc.	
+	letterpaper, oneside, openany
+]{book}
+
+% INFORMACIÓN DEL DOCUMENTO
+\def\documenttitle {Concepción y desarrollo de un software para la obtención y el procesamiento de información procedente de datos de EPLAN para la puesta en marcha virtual}
+\def\documenttitleeng {Design and Development of Software for the Acquisition and Processing of Information from EPLAN Data for Virtual Commissioning}
+\def\documentsubtitle {}
+\def\degreetitle {
+	Grado en Ingeniería Electrónica, Robótica y Mecatrónica 
+	\bigbreak\vspace{0.1cm}
+    Escuela de Ingenierías Industriales
+    \bigbreak\vspace{0.1cm}
+    Universidad de Málaga
+}
+
+\def\universityname {Universidad de Málaga}
+\def\universityfaculty {Escuela de Ingenierías Industriales}
+\def\universitydepartment {Departamento de XXX}
+\def\universitydepartmentimage {logo_UMA.png}
+\def\universitydepartmentimagecfg {height=2.5cm}
+\def\universitylocation {Málaga}
+
+% INTEGRANTES, PROFESORES Y FECHAS
+\def\documentauthor {Fernando Asenjo Visiedo}
+\def\documentdate {\the\year}
+
+\def\portrait {
+	\begin{center}
+	\vspace{0.5cm} %~ \\
+	% \MakeUppercase{\textbf{\Large{\documenttitle}}} ~ \\
+    \MakeUppercase{\textbf{\Large{Trabajo Fin de Grado}}} \\
+    \vspace{1cm}
+    %\MakeUppercase{\textbf{\Large{Título}}} \\
+    %\vspace{0.1cm}
+    \MakeUppercase{\textbf{\large{\documenttitle}}} \\
+    \vspace{0.5cm}
+    \MakeUppercase{\textbf{\large{\documenttitleeng}}} ~ \\
+    \vspace{1.5cm}
+    \MakeUppercase{\degreetitle} ~ \\    
+    \vspace{1.5cm}
+
+    % \begin{flushleft}
+    \textbf{Autor:} \documentauthor \\
+    \vspace{0.5cm}
+    \textbf{Tutor:} Víctor Torres López \\
+    Área de conocimiento: Ingeniería de Sistemas y Automática \\
+    \vspace{0.5cm}
+    %\textbf{Cotutor:} XXXX \\
+    %Área de conocimiento: XXXX \\
+    % \end{flushleft}
+    
+    \vspace{1.0cm} %\\
+    \universitylocation, Febrero de \documentdate
+ 
+	% \begin{tabular}{c}
+	% 	\MakeUppercase{Autor: \documentauthor} \\
+	% 	\vspace{1.0cm} \\
+	% 	PROFESOR GUÍA: \\
+	% 	PROFESOR 1 \\
+	% 	\vspace{0.5cm} \\
+	% 	MIEMBROS DE LA COMISIÓN: \\
+	% 	PROFESOR 2 \\
+	% 	PROFESOR 3 \\
+	% 	\vspace{0.5cm} \\
+ %        \universitylocation, julio de \documentdate
+	% 	\MakeUppercase{\universitylocation} \\
+	% 	\MakeUppercase{Julio \documentdate}
+	% \end{tabular}
+	\end{center}
+}
+% \def\abstracttable {
+% 	\begin{tabular}{l}
+% 		RESUMEN DE LA MEMORIA PARA OPTAR \\
+% 		AL TÍTULO DE MAGÍSTER EN CIENCIAS \\
+% 		DE LA INGENIERÍA \\
+% 		POR: \MakeUppercase{\documentauthor} \\
+% 		FECHA: \MakeUppercase{\documentdate} \\
+% 		PROF. GUÍA: NOMBRE PROFESOR
+% 	\end{tabular}
+% }
+
+% IMPORTACIÓN DEL TEMPLATE
+
+\usepackage{atbegshi}
+\usepackage{placeins}
+\input{template}
+\graphicspath{{img/}}
+\usepackage{xurl} % Cortes de línea en direcciones bibliográficas largas.
+
+% Mantener la puntuación después del paréntesis de las notas bibliográficas.
+\AtBeginDocument{%
+  \let\TFGOriginalAPACrefnote\APACrefnote
+  \renewcommand{\APACrefnote}[1]{\TFGOriginalAPACrefnote{#1}.}%
+}
+
+\usepackage{circuitikz} % Para el esquema del sistema de 6 nudos
+\usepackage{acronym}
+
+
+% Añadir Índice de Ilustraciones al índice general
+\let\originalListOfFigures\listoffigures
+
+\renewcommand{\listoffigures}{%
+    \clearpage
+    \phantomsection
+    \addcontentsline{toc}{chapter}{Índice de Ilustraciones}
+    \originalListOfFigures
+}
+
+
+\setstretch{1.5} % Espaciado de línea y media
+\setlength{\parskip}{0pt} % Párrafos separados mediante sangría, sin espacio adicional
+
+\begin{document}
+
+% PORTADA
+\templatePortrait
+
+% CONFIGURACIÓN DE PÁGINA Y ENCABEZADOS
+\templatePagecfg
+
+% Declaración de originalidad
+\includepdf{DeclaracionOriginalidadEII}
+
+% RESUMEN O ABSTRACT
+
+\begin{resumend}
+...
+\end{resumend}
+
+\begin{abstractd}
+
+Abstract
+
+\mbox{}
+
+Palabras clave: palabra1, palabra2, palabra3.
+
+\end{abstractd}
+
+
+
+% Página en blanco
+\clearpage
+\thispagestyle{plain}
+\null
+\newpage
+
+% DEDICATORIA
+% \begin{dedicatory}
+% 	Una frase de dedicatoria, \\
+% 	pueden ser dos líneas. \\
+% 	~ \\
+% 	\textbf{Saludos}
+% \end{dedicatory}
+
+% AGRADECIMIENTOS
+% \begin{acknowledgments}
+% 	\lipsum[1]
+% \end{acknowledgments}
+
+% TABLA DE CONTENIDOS - ÍNDICE
+\templateIndex
+
+% Página en blanco
+
+% =====================================================
+% LIST OF FIGURES
+% =====================================================
+
+%\clearpage
+%\phantomsection
+%\addcontentsline{toc}{chapter}{\nameltfigure}
+%\renewcommand{\listfigurename}{\nameltfigure}
+%\listoffigures
+% Página en blanco
+%\clearpage
+%\thispagestyle{plain}
+%\null
+%\newpage
+% =====================================================
+% LIST OF TABLES
+% =====================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{\namelttable}
+\renewcommand{\listtablename}{\namelttable}
+\listoftables
+% Página en blanco
+%\clearpage
+%\thispagestyle{plain}
+%\null
+%\newpage
+% =====================================================
+% ACRONYMS
+% =====================================================
+
+\clearpage
+\phantomsection
+\addcontentsline{toc}{chapter}{Acrónimos}
+
+\chapter*{Acrónimos}
+
+\section*{A}
+
+\begin{itemize}
+
+    \item API: Application Programming Interface
+
+\end{itemize}
+
+
+\section*{E}
+
+\begin{itemize}
+
+    \item E-CAD: Electrical Computer-Aided Design
+    \item EDAG PS: EDAG Production Solutions GmbH \& Co. KG
+
+\end{itemize}
+
+
+\section*{I}
+
+\begin{itemize}
+
+    \item IDE: Integrated Development Environment
+    
+
+\end{itemize}
+
+
+\section*{P}
+
+\begin{itemize}
+
+    \item PLC: Programmable Logic Controller
+
+\end{itemize}
+
+
+\section*{T}
+
+\begin{itemize}
+
+    \item TIA: Totally Integrated Automation
+
+\end{itemize}
+
+
+\section*{V}
+
+\begin{itemize}
+
+    \item VC: Virtual Commissioning
+
+\end{itemize}
+
+% CONFIGURACIONES FINALES
+\templateFinalcfg
+
+% ======================= INICIO DEL DOCUMENTO =======================
+
+% \input{example}
+
+\input{Cap_1}
+
+\input{Cap_2}
+
+\input{Cap_3}
+
+\input{Cap_4}
+%\nocite{depince2004virtual}
+%\nocite{11544405}
+%\nocite{11205608}
+%\nocite{7048867}
+%\nocite{jiang2023digitaltwin}
+%\nocite{hao2023virtualcommissioning}
+\bibliography{library}
+
+% FIN DEL DOCUMENTO
+\end{document}
+
+
+\end{document}

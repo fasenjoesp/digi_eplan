@@ -1,0 +1,203 @@
+% Capítulo 1. Introducción revisada según las anotaciones del tutor.
+
+\chapter{Introducción} \label{ch:Cap_1}
+
+
+Este proyecto se centra en el desarrollo de una aplicación que reduce las tareas manuales necesarias en la preparación de la puesta en marcha virtual de máquinas e instalaciones industriales. Concretamente, se pretende reutilizar la información incluida en los esquemas eléctricos de una herramienta de diseño eléctrico, con el fin de identificar sensores y actuadores. Una vez identificados estos elementos, se relacionan con las variables del controlador del sistema industrial y se generan los elementos correspondientes en un entorno de simulación.
+
+A modo de ilustración, se puede considerar una cinta transportadora con un sensor que tiene como función detectar cuándo llega una pieza. En el esquema eléctrico, este sensor vendría documentado con una identificación y con una dirección de entrada al controlador del sistema. Luego, el programa de control emplea una variable que le permite verificar si el sensor detecta alguna pieza y ejecutar alguna acción como detener la cinta. Para poder probar este programa sin disponer de una cinta física, se aplica un modelo virtual de la misma con un sensor para su comprobación. En el transcurso de probar el funcionamiento, el ingeniero debe comprobar que el sensor del esquema eléctrico, la variable del programa de control y el elemento que actúa como sensor en la simulación, se refieran al mismo dispositivo. Cuando una instalación contiene un gran número de sensores, repetir manualmente estas comprobaciones requiere tiempo y puede introducir errores.
+
+Este capítulo explica los conceptos necesarios para entender este trabajo. También introduce el contexto en el que se lleva a cabo, presentando la empresa EDAG Production Solutions. Por último se detalla el estado del arte.
+
+\section{Conceptos previos}
+
+Este apartado presenta los conceptos fundamentales necesarios para entender el trabajo desarrollado. En primer lugar, se define la puesta en marcha virtual o comisionado virtual (\textit{Virtual Commissioning, VC}) junto con sus ventajas e inconvenientes. En segundo lugar, se introduce el concepto de gemelo digital y su relación con el VC. A continuación, se explican las herramientas empleadas en este trabajo. Finalmente se justifica la arquitectura de aplicación propuesta.
+
+\subsection{Puesta en marcha virtual} \label{subsec:vc}
+
+La puesta en marcha virtual (VC) es definida por Alex Beilby como: \textit{"La puesta en marcha virtual es la práctica de utilizar tecnología de simulación <<virtual>> para realizar la puesta en marcha —diseñar, instalar o probar— del software de control mediante un modelo virtual de la máquina antes de conectarlo al sistema real"} \shortcite{beilby2025virtualcommissioning}. La VC es por tanto un tipo de metodología que posibilita simular maquinaria antes de la puesta en marcha real en un entorno virtual. Este entorno está formado por modelos y herramientas software que permiten representar y reproducir mediante simulación el comportamiento del sistema físico y su interacción con el sistema de control. De este modo, el programa de control puede ejecutarse y probarse frente al modelo virtual de la instalación antes de conectarse al sistema físico real. 
+
+En el ejemplo de la cinta transportadora, la simulación permite al programador del sistema de control comprobar si el motor se detiene cuando se activa el sensor. También, el ingeniero puede ensayar situaciones previstas como puede ser la ausencia de pieza. La utilidad de estas pruebas depende directamente de lo fiel que sea el modelo para reproducir determinados comportamientos.
+
+Por tanto, la VC permite detectar y prevenir errores en el software de control antes de la puesta en marcha real. Estos errores en el programa de control provocan retrasos en la puesta en marcha \shortcite{striffler2023concepts}. Según un estudio del VDW (\textit{Asociación Alemana de Fabricantes de Máquinas-Herramienta}) citado por \shortciteA{wuensch2007virtuelleinbetriebnahme}, la puesta en marcha representa una media del 20\% del tiempo total de ejecución de un proyecto de instalación. De este tiempo, el 63\% se debe a errores de software. 
+
+Al detectar estos errores en una fase temprana, se puede reducir tanto el tiempo necesario para la puesta en marcha real como la duración total del proyecto, además de mejorar considerablemente la calidad del software \shortcite{striffler2023concepts}. Aunque las ventajas de la VC son numerosas, se ven contrarrestadas por el elevado esfuerzo de modelado \shortcite{drath2008virtuelle}. Debido a la gran cantidad de tareas manuales requeridas, su implantación industrial se ve dificultada. Por este motivo, en los últimos años la investigación se ha centrado en  reducir y (semi)automatizar los procesos de modelado necesarios. Algunos de estos enfoques ya han comenzado a aplicarse en la práctica industrial \shortcite{striffler2023concepts}.
+
+
+Por tanto, el beneficio que supone la puesta en marcha virtual depende en gran medida del esfuerzo necesario en modelar una máquina o instalación industrial. Si el tiempo que consume el proceso de crear el modelo virtual es superior al tiempo que se busca ahorrar durante la puesta en marcha real, su aplicación puede dejar de resultar rentable. En esta línea, la aplicación desarrollada en este trabajo busca reducir este esfuerzo, automatizando la incorporación y configuración de componentes recurrentes como son los sensores y actuadores. De este modo, se pretende contribuir a que el esfuerzo dedicado a la creación del modelo virtual sea inferior al ahorro que puede obtenerse posteriormente durante la puesta en marcha real.\\
+
+
+\subsection{Gemelo digital} \label{subsec:gemelo}
+
+La NASA, \cite{glaessgen2012digitaltwin} define el gemelo digital como una simulación integrada, multifísica, multiescala y probabilística de un vehículo o sistema, que utiliza los mejores modelos físicos disponibles, actualizaciones procedentes de sensores, el historial de la flota, etc., para reproducir la vida de su correspondiente gemelo físico en operación. De este modo, el modelo digital puede actualizarse a partir de la información procedente de su contraparte física, reflejando su estado y evolución. Esta vinculación entre ambos sistemas permite utilizar el gemelo digital no solo como herramienta de simulación, sino también como apoyo para el análisis y la evaluación del comportamiento del sistema físico.
+
+La VC requiere un modelo virtual de la instalación. Ese modelo, validado en la puesta en marcha virtual constituye la base del gemelo digital, que al acoplarse a datos del sistema real, puede evolucionar hacia un gemelo digital operativo \shortcite{lechler2019virtual,tanegue2025synergies}. El modelo virtual evoluciona, por tanto, hacia un gemelo digital que permite al ingeniero supervisar y analizar el comportamiento del sistema más allá de la fase de puesta en marcha. La relación sinérgica de la puesta en marcha virtual (VC) y los gemelos digitales (DT) facilita la aplicación de ambas tecnologías, puede mejorar la precisión y favorecer la reutilización de los modelos digitales \shortcite{tanegue2025synergies}. Esta relación abre, por tanto, nuevas posibilidades para la evolución de la puesta en marcha virtual, favoreciendo un mayor grado de automatización de los procesos industriales. Esta integración se reconoce cada vez más como transformadora, atrayendo un interés creciente tanto por parte del ámbito académico como de la industria \shortcite{tanegue2025synergies}.
+
+Este trabajo constituye un paso en el proceso de creación de un gemelo digital, ya que permite automatizar la generación de elementos de simulación de uso recurrente, como los sensores y actuadores. De este modo, se facilita la creación del modelo virtual necesario para la puesta en marcha virtual y se establece una base para su posterior evolución hacia un gemelo digital operativo. A continuación, en el siguiente apartado se estudian las herramientas empleadas para lograr el objetivo que se propone. \\
+
+
+\subsection{Herramientas empleadas} \label{subsec:herramientas}
+
+El presente apartado tiene como objetivo introducir las principales herramientas empleadas a lo largo del proyecto. De este modo, se pretende familiarizar al lector con la terminología técnica utilizada. A continuación, se detallan sus características y funciones principales.
+
+\subsubsection{Controladores lógicos programables y TIA Portal} \label{subsec:plc}
+
+Siemens define un controlador lógico programable o PLC (\textit{Programmable Logic Controller}) como un controlador electrónico cuyas funciones se encuentran almacenadas en forma de programa en la unidad de control \shortcite{Siemens2007}. Esta unidad de control actúa como un ordenador con memoria programable en la que se almacenan e implementan estas funciones como operaciones lógicas, secuenciación, temporización, conteo y operaciones aritméticas con el objetivo de controlar máquinas y procesos \shortcite{ma2019programmable}.
+
+En términos generales, el PLC recibe señales de entrada, ejecuta un programa y establece señales de salida de acuerdo con las instrucciones de ese programa. Por ejemplo, una de estas señales de entrada puede indicar que un sensor ha detectado una pieza y una señal de salida puede ordenar el accionamiento de un motor o de una electroválvula. En este sentido, el programa del PLC define las condiciones y secuencias de funcionamiento de la máquina. En el ejemplo de la cinta transportadora, puede establecer que la cinta avance mientras no haya una pieza en el punto de detección y que se detenga cuando el sensor se active. Por tanto, el sensor informa del estado del proceso y el actuador ejecuta la acción ordenada por el controlador.
+
+El entorno de programación donde se ha programado el PLC es TIA Portal. TIA Portal (\textit{Totally Integrated Automation Portal}) es el entorno software de Siemens empleado para configurar los dispositivos de una instalación de automatización y desarrollar, cargar y comprobar el programa del PLC \shortcite{siemens2010tia}. Dentro del proyecto cargado en TIA Portal, se encuentran las variables del PLC, denominadas \textit{PLC tags} que se corresponden a sus señales de entrada y salida. Estas variables disponen de un nombre, un tipo de dato y una dirección, además de alguna descripción del programador. Las relevantes para este trabajo, son las que se asocian a señales de sensores y actuadores.
+
+Como ejemplo, se puede considerar una variable con la denominación \texttt{PiezaDetectada}, de tipo \texttt{Bool}, es decir, indica si algo es verdadero o falso. Esta PLC Tag podría estar situada en la dirección de entrada \texttt{\%I0.0}. En este caso, la variable correspondería a un sensor. Si el nombre no fuera lo suficientemente claro, la descripción permite al ingeniero interpretar su funcionamiento. La dirección de entrada suele representarse con la letra I en la notación internacional y con E en la alemana. Estas diferencias de notación se tendrán en cuenta más adelante en este trabajo.
+
+Este proyecto parte de una exportación previa de estas \textit{PLC Tags} desde TIA Portal en una hoja de cálculo de Microsoft Excel. La aplicación que se ha desarrollado, compara las denominaciones y conexiones de estas variables con las variables documentadas en la herramienta de diseño eléctrico, identificando únicamente los sensores y actuadores. Esta comparación permite verificar la coherencia entre el PLC y los esquemas eléctricos. 
+
+\subsubsection{EPLAN} \label{subsec:eplan}
+
+EPLAN Electric P8 es la herramienta de diseño eléctrico asistido por ordenador (\textit{Electrical Computer-Aided Design}, E-CAD) con la que trabaja este proyecto. Tiene como función, elaborar los esquemas y la documentación eléctrica de máquinas e instalaciones \shortcite{eplan2026electricp8}. Este tipo de herramienta permite reducir el laborioso proceso de dibujar manualmente esquemas eléctricos, por ejemplo mediante la gestión en bibliotecas de símbolos normalizados de componentes eléctricos que facilitan su reaprovechamiento. Estos esquemas eléctricos contienen información sobre la instalación industrial y de las diferentes máquinas. Esta información consiste en datos sobre los dispositivos, sus propiedades y sus conexiones, pudiendo reutilizarse para preparar modelos de simulación \shortcite{zafirov2012information}. 
+
+Dentro de un proyecto de EPLAN, cada señal o elemento documentado, puede contener un código de identificación o BMK (\textit{Betriebsmittelkennzeichen}), una descripción, una definición de función, los artículos asociados a este elemento y la página del esquema en la que aparece. El BMK es el identificador único de cada dispositivo dentro del esquema eléctrico. Sirve para reconocer y ubicar el mismo elemento a pesar de que aparezca representado en varias páginas o funciones. La descripción es un texto descriptivo asignado al elemento como puede ser "sensor de proximidad". La definición de función indica qué tipo de función eléctrica o técnica representa el elemento dentro de EPLAN. El artículo asociado identifica el componente físico o producto comercial que se ha asignado al dispositivo. Cuando el proyecto los contiene, también resultan fundamentales los datos de conexión al PLC y la dirección de la señal. Toda esta información resulta especialmente útil en este trabajo al permitir la identificación del dispositivo y su agrupación en una categoría. 
+
+En este trabajo, esta información se extrae mediante la interfaz de programación de aplicaciones o API (\textit{Application Programming Interface}) de EPLAN. Esta interfaz posibilita que un programa en C\# consulte los objetos y sus propiedades. A partir de esos datos, se plantea identificar los sensores y actuadores así como reunir la información de cada dispositivo.
+
+El resultado de la extracción se estructura de forma tabular. Cada fila de la tabla representa un dispositivo y cada columna contiene sus propiedades y la información que se emplea para su identificación. Esta forma de representar los datos resulta útil debido a que la información extraída presenta una estructura simple y homogénea. Además, esta estructura facilita tanto el procesamiento posterior por parte de la aplicación como su inspección por parte del usuario.
+
+Los datos pueden exportarse a formatos como CSV (\textit{Comma-Separated Values}) o XLSX (\textit{Microsoft Excel Open XML Spreadsheet}). Estos formatos permiten consultar los resultados en una hoja de cálculo, lo que facilita su revisión y análisis. Asimismo, permiten realizar posteriormente la comparación con las variables del PLC exportadas desde TIA Portal.
+
+
+En el ejemplo de la cinta, la aplicación buscaría el sensor de detección de pieza en el esquema eléctrico, recogería sus propiedades y comprobaría su asociación con la variable \texttt{PiezaDetectada}. Si faltara una dirección o existiera una correspondencia ambigua, el resultado debe indicar la incidencia para su revisión. Por consiguiente, la aplicación desarrollada actúa como una herramienta de asistencia para evitar errores y enredadas comprobaciones que dificulten el trabajo. \\
+
+\subsubsection{fe.screen-sim} \label{subsec:feescreen}
+
+fe.screen-sim es el entorno de simulación desarrollado por F.EE GmbH aplicado en este trabajo. Es un software de referencia para la puesta en marcha virtual mediante gemelos digitales y la simulación de PLC en los ámbitos de la ingeniería mecánica y la ingeniería de plantas. Este software permite transferir todos los datos existentes al modelo virtual y simular así el comportamiento del sistema planificado \shortcite{fee2026fescreensim,fee2025fescreensimbrochure}. En el modelo pueden representarse, entre otros elementos, sensores y sistemas de transporte cuyo comportamiento interviene en las pruebas de control.
+
+Para establecer la comunicación entre el modelo virtual desarrollado en fe.screen-sim y el programa cargado en el controlador, se recurre normalmente a un controlador simulado. Siemens ofrece la posibilidad de simular un controlador mediante S7-PLCSIM Advanced. S7-PLCSIM Advanced permite probar, depurar y optimizar proyectos de automatización de forma eficiente sin necesidad de disponer del hardware físico \shortcite{fee2026faq,siemens2026plcsim}. Para realizar la comunicación entre este controlador virtual y fe.screen-sim, éste último ofrece una herramienta denominada PLCSIM Advanced Connector. Ésta permite establecer la conexión con las instancias de PLC virtuales y realizar el intercambio de señales entre el programa de control y el modelo de simulación.
+
+Por ejemplo, durante una prueba, el controlador envía una orden de marcha y el modelo virtual simula el movimiento de la cinta. Cuando la pieza alcanza el sensor virtual, el modelo actualiza la señal de entrada correspondiente y el programa del PLC reacciona a ella. En este proceso, TIA Portal se utiliza para programar y configurar el controlador, mientras que el PLC físico o simulado ejecuta el programa y fe.screen-sim reproduce el comportamiento de la instalación.
+
+
+\subsubsection{Microsoft Visual Studio} \label{subsec:microsoft_visual_studio}
+
+Microsoft Visual Studio es el entorno de desarrollo integrado (\textit{Integrated Development Environment}, IDE) empleado para escribir, compilar y depurar la aplicación desarrollada \shortcite{microsoft2026visualstudio}. Es por tanto, un entorno que incluye todas las herramientas necesarias para desarrollar software. Esto ayuda a facilitar y mejorar cada una de las etapas del proceso de desarrollo.
+
+Para este trabajo, se ha aplicado el lenguaje de programación de C\# por su integración con .NET y con las APIs de EPLAN y de fe.screen-sim empleadas. .NET es una plataforma de código abierto gratuita y multiplataforma para compilar muchos tipos de aplicaciones. Puede ejecutar en varios lenguajes, con C\# como el más popular. Destaca principalmente por combinar productividad, rendimiento, seguridad, fiabilidad y portabilidad dentro de una misma plataforma de desarrollo \shortcite{Microsoft2026NET}. En lo que respecta a C\#, este lenguaje está orientado a objetos. Este tipo de programación se usa para estructurar un programa de software en elementos simples y reutilizables de clases para crear instancias individuales de objetos \shortcite{MartinezCaneloPOO}. Un ejemplo de un programa orientado a objetos podría ser uno que gestionara una fábrica. En un lenguaje orientado a objetos como C\#, cada elemento real del sistema podría representarse como un objeto. En el caso de un sensor, éste sería un objeto con datos como su nombre, tipo y estado. Así, en lugar de disponer de todas las variables y funciones mezcladas, el programa se organiza en objetos que reúnen la información y las operaciones relacionadas con cada elemento. Esto hace que el código sea más fácil de estructurar, entender y reutilizar. \\
+
+
+\subsection{Arquitectura propuesta y organización del procesamiento} \label{subsec:metodologia}
+
+La aplicación tiene como propósito extraer datos de EPLAN, interpretarlos, compararlos con las variables del PLC y preparar los resultados para el entorno de simulación. Su organización debe permitir modificar una de estas tareas sin afectar a las demás. Por ejemplo, un cambio en el formato de exportación de los \textit{PLC Tags} de TIA PORTAL no debería obligar a cambiar el algoritmo que ayuda a identificar un sensor. Para lograr esto, se ha estudiado qué arquitectura y qué patrón de aplicación cumplen con el objetivo que se pretende conseguir. 
+
+
+\subsubsection{Estilo de arquitectura}
+
+Se propone una aplicación de escritorio organizada en capas. Este tipo de arquitectura divide una aplicación en varias capas o niveles que componen la aplicación y cada una cumple una función particular. Este tipo de organización facilita al programador distribuir las tareas en cada una de estas capas \shortcite{redhat2023architecture}. Al mismo tiempo, también se puede considerar  arquitectura monolítica debido a que el sistema se desarrolla y despliega como una única aplicación de escritorio. Esta arquitectura se asocia a aplicaciones que contienen todas las funciones integradas en ellas \shortcite{redhat2023architecture}. De este modo, la solución se plantea como una aplicación monolítica modular organizada internamente mediante una arquitectura en capas. Dentro de este proyecto se distinguen cuatro capas:
+
+
+\begin{itemize}
+
+    \item \textbf{Presentación}: es la interfaz de la aplicación con la que el usuario interactúa. Dentro de esta capa, se pueden seleccionar los datos de entrada, iniciar las tareas de comparación y consultar los resultados o los problemas encontrados.
+    \item \textbf{Coordinación y procesamiento}: se encarga de administrar y organizar los distintos pasos que realiza la aplicación. Cuando el usuario inicia el proceso de comparación, se solicita a la capa de Integración la extracción de los datos de sensores y actuadores del proyecto de EPLAN, así como la lectura del archivo de variables del PLC previamente exportadas desde TIA Portal. Para ello, se emplean las estructuras y reglas definidas en la capa de Dominio para clasificar los elementos y comparar la información de ambas fuentes de entrada. A continuación, se proporcionan los resultados a la capa de Presentación para mostrar qué elementos presentan coincidencias y cuáles  incoherencias. Finalmente, se pregunta al usuario a través de la capa de Presentación si desea generar los elementos validados en fe.screen-sim. Si confirma, se solicita a la capa de Integración su generación en el entorno de simulación.
+    
+    
+    \item \textbf{Integración}: se encarga de obtener los datos del proyecto de EPLAN y leer las variables del PLC exportadas desde TIA Portal. Utiliza las estructuras definidas en la capa de Dominio para representar la información y entregarla a la capa de Coordinación y procesamiento, donde se organiza su clasificación, comparación y validación. Al mismo tiempo, permite guardar en un formato tabular la lista de sensores y actuadores identificados en EPLAN y leerla posteriormente para la comparación. Finalmente, se comunica con fe.screen-sim para generar los elementos validados cuando lo solicita la capa de Coordinación y procesamiento.
+    
+   \item \textbf{Dominio}: define las propiedades que caracterizan a los sensores y actuadores, así como las reglas para identificarlos a partir de los datos de EPLAN y de las variables del PLC.
+
+\end{itemize}
+
+La Figura~\ref{fig:arquitectura-capas} resume esta división en capas de la aplicación de forma esquemática. Estas capas realizan distintas tareas de procesamiento y se ha decidido aplicar un patrón de arquitectura para simplificar estas tareas. Por tanto, para organizar el procesamiento de los datos y su paso entre etapas, se ha seleccionado el patrón \textit{Pipes and Filters}, que se describe en el siguiente apartado.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.82\textwidth]{arquitectura-capas}
+    \caption{Organización en capas de la aplicación.}
+    \label{fig:arquitectura-capas}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{Procesamiento mediante canalizaciones y filtros}
+
+El patrón arquitectónico \textit{Pipes and Filters} (Canalizaciones y Filtros) proporciona una estructura para aquellos sistemas que realizan operaciones de procesamiento o transformación sobre un flujo de datos. En este patrón, la tarea global se divide en una secuencia de etapas de procesamiento, denominadas filtros, conectadas mediante canales o \textit{pipes}. La salida de cada etapa constituye la entrada de la siguiente \shortcite{buschmann1996pattern}.
+
+Un filtro recibe y emite datos de forma incremental, lo que puede reducir la latencia. Además, enriquece, refina o transforma sus datos de entrada. El sistema dispone como entrada una fuente de datos, como un archivo de texto. La salida fluye hacia un destino de datos, como un archivo, un programa, etc. La fuente de datos, los filtros y el destino de datos están conectados secuencialmente mediante conductos o \textit{pipes}. Cada conducto implementa el flujo de datos entre pasos de procesamiento adyacentes. La secuencia de filtros combinados mediante conductos se denomina canalización de procesamiento o \textit{processing pipeline} \shortcite{buschmann1996pattern}.
+
+En el presente trabajo, este patrón permitirá organizar el tratamiento de los datos en etapas con funciones concretas. Una de estas funciones es la clasificación de los elementos en sensores y actuadores. La Figura~\ref{fig:pipes-filters} presenta el flujo propuesto y se distinguen cinco etapas:
+
+\begin{enumerate}
+    \item \textbf{Adquisición}: obtiene los datos del proyecto de EPLAN mediante su API y lee las variables del PLC previamente exportadas desde TIA Portal.
+    
+    \item \textbf{Normalización y clasificación}: estructura los datos obtenidos adecuándolos a un formato común para facilitar su interpretación y revisión posterior. A continuación, clasifica estos datos y reúne en una lista los dispositivos que corresponden a sensores y actuadores.
+    
+    \item \textbf{Validación}: se encarga de verificar la correspondencia de los datos de EPLAN con las variables del PLC. Las incoherencias y coincidencias quedarán registradas.
+    
+    
+    \item \textbf{Transformación}: adapta los datos que han sido validados a la estructura requerida por el entorno de simulación, que en este caso es fe.screen-sim.
+    
+    \item \textbf{Generación}: crea y configura los elementos en el entorno de simulación mediante la API de fe.screen-sim, utilizando para ello los datos preparados en la etapa de Transformación.
+    
+       
+\end{enumerate}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{pipes-filters}
+    \caption{Flujo de procesamiento mediante canalizaciones y filtros.}
+    \label{fig:pipes-filters}
+\end{figure}
+
+\section{Contexto} \label{sec:contexto}
+
+
+Este trabajo se desarrolla en el marco de unas prácticas realizadas en EDAG Production Solutions GmbH \& Co. KG (EDAG PS), cuya sede principal se encuentra en Fulda, Alemania \shortcite{edagps2026locations}. Las prácticas se enmarcan en el convenio existente entre la Universidad de Málaga y EDAG. Este acuerdo permite desarrollar el Trabajo de Fin de Grado dentro de un entorno profesional relacionado directamente con la ingeniería y la automatización industrial.
+
+EDAG Production Solutions forma parte de EDAG Group, un grupo internacional que ofrece servicios que abarcan las distintas fases del desarrollo, desde la idea inicial hasta una solución preparada para la producción. Se ocupa de sectores como la automoción, defensa, medicina y farmacia, energía e industria \shortcite{edag2026group}. Dentro de este grupo, además de EDAG PS, se distinguen:
+
+\begin{itemize}
+
+\item EDAG Engineering: se encarga del desarrollo de módulos, vehículos completos y soluciones de movilidad.
+
+\item EDAG Aeromotive: se ocupa del sector aeroespacial y de defensa.
+
+\item EDAG Akademie: ofrece una amplia gama de cursos de formación y seminarios especializados para los clientes del sector de la automoción.
+
+\end{itemize}
+
+
+EDAG Production Solutions por su parte, optimiza los procesos de producción interconectando todos los procesos involucrados \shortcite{edagps2026about}. Dentro de EDAG PS, se encuentra el departamento de puesta en marcha virtual (VIBN en alemán). Este departamento ayuda a implementar la puesta en marcha virtual en fábricas inteligentes, reduciendo costes y minimizando riesgos de malfuncionamiento \shortcite{edag2026vibn}.
+
+En este entorno de trabajo, surge la necesidad de comprobar si la información de los sensores y actuadores en los esquemas eléctricos coincide con la que se halla en la programación del PLC, tal y como se explicó al comienzo de este capítulo. Las discrepancias entre ambas fuentes pueden dar lugar a errores que dificultan la preparación de la puesta en marcha virtual. Para abordar este problema, se desarrolla una aplicación que permite detectar incoherencias entre los datos de EPLAN y las variables del PLC. Una vez validados los elementos, se pueden generar en el entorno de simulación. En la siguiente sección se revisan estudios previos vinculados con la automatización de la preparación de modelos para la puesta en marcha virtual.\\
+
+
+\section{Estado del arte} \label{sec:estado_arte}
+
+Existen diversos trabajos que han tratado de reducir el esfuerzo necesario para la preparación de la puesta en marcha virtual. Para ello, reutilizan información generada en etapas previas a la puesta en marcha, como la información de una máquina recogida en sus esquemas eléctricos. Este tipo de enfoques buscan optimizar y automatizar el procesamiento de los datos que se integran en los modelos de simulación.
+
+
+Un enfoque fue presentado por \shortciteA{neugebauer2011reducing}. Los autores proponen aprovechar la información que ya existe en los documentos de diseño de una máquina, en lugar de introducirla de nuevo manualmente para la puesta en marcha virtual. Para conseguir este objetivo, desarrollan un prototipo de software que extrae información de los modelos de diseño asistido por ordenador (CAD) y de los esquemas eléctricos y neumáticos. Esta información consiste en tipos de componentes, así como sus propiedades y las conexiones que establecen. A continuación, aplican reglas que reconocen los componentes y sus relaciones y los transforman en elementos del modelo de simulación. El modelo generado permitió probar el programa de un controlador y detectar errores. Los autores concluyen que el grado de automatización depende de que la documentación contenga suficiente información y que sea coherente. 
+
+
+\shortciteA{oppelt2014automatic} presentan un enfoque similar al anterior, reutilizando la información de ingeniería de planta para generar modelos de simulación. Esta propuesta establece, dentro de la herramienta que contiene los datos de diseño de la planta, las correspondencias entre sus componentes y los modelos de una biblioteca de simulación. Estas correspondencias permiten configurar los modelos con los datos existentes y reproducir sus conexiones, sin recurrir a una herramienta adicional para establecer dichas relaciones. Los autores implementan un prototipo que utiliza esta información para generar un modelo en el entorno de simulación. Sin embargo, el método requiere preparar previamente las bibliotecas y las correspondencias, así como completar manualmente los datos que faltan para ejecutar la simulación.
+
+
+El enfoque de \shortciteA{pyschny2022increased} difiere un poco de los anteriores. Los autores parten de los planos de distribución de un almacén automatizado. Emplean una aplicación desarrollada en Python para interpretar la información de estos planos, organizarla y completarla con los datos de una biblioteca de componentes creada por ellos. A continuación, una aplicación desarrollada en C\# utiliza la API de fe.screen-sim para crear y configurar los objetos en el entorno de simulación. Ese último paso está estrechamente relacionado con el presente proyecto. Sin embargo, en el trabajo de estos autores, la conexión entre los modelos de comportamiento para controlar el conjunto mediante un PLC se realiza en una etapa posterior dentro del simulador.
+
+
+Un último enfoque a considerar es el presentado por \shortciteA{schaper2025automatic}. Los autores desarrollan un sistema que permite al usuario seleccionar qué parte de la máquina desea simular. A continuación, extrae la información relevante mediante la API de EPLAN y la relaciona con los modelos de simulación disponibles de los fabricantes de los componentes. Cuando no se dispone de estos modelos, recurre a la biblioteca del entorno de simulación. Con la información reunida, genera un modelo que incluye los componentes y sus conexiones. Los autores comprueban el procedimiento en un módulo de una máquina de corte láser y obtienen un modelo ejecutable. Sin embargo, la correspondencia entre los puntos de conexión físicos y los puertos de los modelos de simulación requiere todavía una definición manual.
+
+
+Los trabajos revisados presentan similitudes con lo que se pretende en este Trabajo de Fin de Grado, especialmente en la reutilización de datos generados durante el diseño de máquinas o instalaciones, como planos y esquemas eléctricos, para generar elementos en un entorno de simulación. El presente trabajo se centra en identificar sensores y actuadores en EPLAN y comprobar su correspondencia con las variables del PLC. Para ello, se desarrolla una aplicación en C\# que extrae los datos de EPLAN y los compara con las variables del PLC que el usuario ha exportado previamente desde TIA Portal a un archivo de hoja de cálculo de Microsoft Excel, en formato .xlsx. Una vez realizada la comparación, el usuario puede decidir si desea generar los elementos validados en fe.screen-sim. En este contexto, se consideran validados los elementos cuyos datos en EPLAN y en las variables del PLC coinciden.
+
+
+Una alternativa que podría estudiarse es el uso de inteligencia artificial para interpretar las denominaciones ambiguas de algunos componentes. En este proyecto se opta por reglas explícitas para clasificar y comparar los datos estructurados. La incorporación de inteligencia artificial requeriría evaluar la fiabilidad de sus resultados y definir cómo revisar las clasificaciones propuestas. Por ello, se considera una posible línea de ampliación, pero queda fuera del alcance de este trabajo.
+
+
+En el próximo capítulo, se describe la metodología seguida para el desarrollo de la aplicación. Se detallan los criterios o reglas establecidas para la identificación de sensores y actuadores. Asimismo se describe el pseudocódigo que representa el funcionamiento global del sistema. Por otro lado, se describen las funcionalidades que proporcionan las APIs de EPLAN y fe.screen-sim.
+
+
+
+
+
+
+
+
